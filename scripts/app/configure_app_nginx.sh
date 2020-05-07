@@ -53,4 +53,7 @@ chmod 755 /usr/bin/node_exporter
 mv /tmp/node_exporter.service /usr/lib/systemd/system/node_exporter.service
 chmod 744 /usr/lib/systemd/system/node_exporter.service
 
+systemctl daemon-reload
+systemctl enable node_exporter
+
 
