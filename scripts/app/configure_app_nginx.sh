@@ -42,8 +42,7 @@ sed -i '#$ModLoad imudp/$ModLoad imudp ' /etc/rsyslog.conf
 sed -i '#$UDPServerRun 514/$UDPServerRun 514' /etc/rsyslog.conf
 sed -i '#$ModLoad imtcp/$ModLoad imtcp' /etc/rsyslog.conf
 sed -i '#$InputTCPServerRun 5140/$InputTCPServerRun 5140' /etc/rsyslog.conf
-
-setenforce 0
+sed -i "s/SELINUX=enforcing/SELINUX=permissive/g" /etc/selinux/config
 
 #Configure monitoring
 useradd node_exporter
