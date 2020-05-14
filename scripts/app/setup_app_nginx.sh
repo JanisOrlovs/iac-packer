@@ -13,6 +13,7 @@ rm -rf $NGINX_DIR/conf.d/*.conf
 mkdir -p $NGINX_DIR/conf.d/ $NGINX_DIR/conf.d/ssl/
 chmod 755 $NGINX_DIR/conf.d/ $NGINX_DIR/conf.d/ssl/ /etc/logrotate.d/
 
+# Configure selinux
 semanage port -a -t http_port_t -p tcp 10061
 semanage port -a -t http_port_t -p tcp 8060
 setsebool -P httpd_can_network_connect 1
@@ -20,8 +21,23 @@ setsebool -P nis_enabled 1
 
 timedatectl set-timezone Europe/Riga
 
-#Install packages
+# Install packages
 for i in "${BINARIES[@]}"
 do
   yum install $i -y
 done
+
+# Install cloud agent for stackdriver logging
+curl -sSO https://dl.google.com/cloudagents/install-logging-agent.sh
+sudo bash install-logging-agent.sh
+echo '
+<source>
+ type tail
+ format none
+ path /home/deploy/log/*.log
+ pos_file /var/lib/google-fluentd/pos/app.pos
+ read_from_head true
+ tag app
+</source>' >> /etc/google-fluentd/google-fluentd.conf
+rm -rf /etc/google-fluentd/config.d/*
+systemctl enable google-fluentd

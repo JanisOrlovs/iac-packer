@@ -44,7 +44,7 @@ sed -i '#$ModLoad imtcp/$ModLoad imtcp' /etc/rsyslog.conf
 sed -i '#$InputTCPServerRun 5140/$InputTCPServerRun 5140' /etc/rsyslog.conf
 sed -i "s/SELINUX=enforcing/SELINUX=permissive/g" /etc/selinux/config
 
-#Configure monitoring
+# Configure monitoring
 useradd node_exporter
 wget -P /usr/bin/ https://storage.googleapis.com/flexidea-resources/data/node_exporter_0.16.0
 mv /usr/bin/node_exporter_0.16.0 /usr/bin/node_exporter
