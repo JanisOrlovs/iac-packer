@@ -9,7 +9,8 @@ systemctl enable nginx
 
 yum install java-11-openjdk-devel-11.0.6.10 -y
 rm -rf $NGINX_DIR/conf.d/*.conf
-
+echo '
+exclude=java*' >> /etc/yum.conf
 mkdir -p $NGINX_DIR/conf.d/ $NGINX_DIR/conf.d/ssl/
 chmod 755 $NGINX_DIR/conf.d/ $NGINX_DIR/conf.d/ssl/ /etc/logrotate.d/
 
@@ -27,17 +28,14 @@ do
   yum install $i -y
 done
 
-# Install cloud agent for stackdriver logging
+# Install google fluentd cloud agent for stackdriver logging
 curl -sSO https://dl.google.com/cloudagents/install-logging-agent.sh
 sudo bash install-logging-agent.sh
-echo '
-<source>
- type tail
- format none
- path /home/deploy/log/*.log
- pos_file /var/lib/google-fluentd/pos/app.pos
- read_from_head true
- tag app
-</source>' >> /etc/google-fluentd/google-fluentd.conf
 rm -rf /etc/google-fluentd/config.d/*
 systemctl enable google-fluentd
+
+# Install stackdriver agent
+curl -sSO https://dl.google.com/cloudagents/add-monitoring-agent-repo.sh
+bash add-monitoring-agent-repo.sh
+yum install -y stackdriver-agent
+systemctl enable stackdriver-agent
